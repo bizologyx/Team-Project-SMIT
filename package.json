@@ -4,21 +4,22 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "concurrently -k \"node --watch server.js\" \"vite\"",
+    "dev": "concurrently -k \"node --watch backend/server.js\" \"vite\"",
     "build": "vite build",
-    "start": "npm run build && NODE_ENV=production node server.js"
+    "start": "npm run build && NODE_ENV=production node backend/server.js"
   },
   "engines": {
     "node": ">=22"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.117.2",
     "@zoom/meetingsdk": "^4.0.0",
+    "concurrently": "^9.1.2",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
-    "openai": "^5.0.0",
-    "concurrently": "^9.1.2"
+    "openai": "^5.0.0"
   },
   "devDependencies": {
     "vite": "^6.1.0"

@@ -1,0 +1,340 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Manage your BolSaathi client and meeting contacts privately on this device.">
+  <title>Contacts · BolSaathi Live</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #070b0a;
+      --panel: #111915;
+      --line: #293a30;
+      --ink: #f1f7f0;
+      --muted: #9ba99e;
+      --lime: #c8ff70;
+      --mint: #72f0c1;
+      --red: #ff9b9b;
+      --pad: clamp(18px, 4vw, 54px);
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: radial-gradient(ellipse at 85% -5%, #20412e 0%, transparent 37%), linear-gradient(180deg, #080d0b, #070b09 70%);
+    }
+    button, input, select, textarea { font: inherit; }
+    button, a { transition: all 0.18s ease; }
+    button { cursor: pointer; }
+    button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible {
+      outline: 2px solid var(--lime);
+      outline-offset: 3px;
+    }
+    .top {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 18px var(--pad);
+      border-bottom: 1px solid #26372c;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(7, 11, 10, 0.84);
+      backdrop-filter: blur(18px);
+    }
+    .brand { font-size: 24px; font-weight: 800; letter-spacing: -0.075em; white-space: nowrap; }
+    .brand span { color: var(--lime); }
+    .brand small { font-size: 9px; color: var(--muted); letter-spacing: 0.15em; display: block; font-weight: 500; }
+    .main-nav { display: flex; align-items: center; gap: 7px; margin: auto; }
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: #aebbb1;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      padding: 10px 13px;
+      font-size: 12px;
+    }
+    .nav-link:hover, .nav-link.active { color: #e0ffb8; background: #c8ff7010; border-color: #c8ff7038; }
+    .nav-count {
+      display: inline-grid;
+      place-items: center;
+      min-width: 19px;
+      height: 19px;
+      padding: 0 5px;
+      border-radius: 99px;
+      background: var(--lime);
+      color: #142016;
+      font-size: 10px;
+      font-weight: 800;
+    }
+    
+    .user-profile-widget { display: flex; align-items: center; gap: 10px; }
+    .user-badge {
+      font-size: 11px;
+      color: var(--lime);
+      border: 1px solid rgba(200, 255, 112, 0.3);
+      border-radius: 99px;
+      padding: 6px 12px;
+      background: rgba(200, 255, 112, 0.08);
+      white-space: nowrap;
+    }
+    .logout-btn {
+      background: transparent;
+      border: 1px solid #34443a;
+      border-radius: 99px;
+      color: #aebbb1;
+      font-size: 11px;
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+    .logout-btn:hover { border-color: var(--red); color: var(--red); }
+
+    main { width: min(1240px, calc(100% - 2 * var(--pad))); margin: 48px auto 76px; }
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--lime);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .eyebrow:before { content: ""; width: 26px; height: 1px; background: var(--lime); }
+    .intro-grid { display: grid; grid-template-columns: 1.15fr 0.85fr; align-items: end; gap: 24px; margin-bottom: 32px; }
+    h1 { font: 400 clamp(44px, 6vw, 76px)/0.98 Georgia, serif; letter-spacing: -0.06em; margin: 0; }
+    h1 em { color: var(--lime); font-weight: 400; }
+    .lead { max-width: 600px; color: #aebdb1; font-size: 14px; line-height: 1.8; margin: 20px 0 0; }
+    .privacy-card {
+      border: 1px solid #c8ff7026;
+      border-radius: 16px;
+      padding: 18px;
+      background: linear-gradient(135deg, #c8ff7010, #72f0c108);
+      color: #c0cec2;
+      font-size: 12px;
+      line-height: 1.8;
+    }
+    .privacy-card b { color: var(--lime); }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 26px 0; }
+    .stat { border: 1px solid var(--line); background: #111915c9; border-radius: 14px; padding: 17px; }
+    .stat strong { display: block; font-size: 27px; font-weight: 600; letter-spacing: -0.05em; }
+    .stat span { display: block; color: var(--muted); font-size: 11px; margin-top: 5px; }
+    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 22px 0 15px; }
+    .search-wrap { flex: 1; min-width: 220px; max-width: 500px; position: relative; }
+    .search-wrap input { padding-left: 40px; }
+    .search-wrap:before { content: "⌕"; position: absolute; left: 14px; top: 7px; font-size: 24px; color: var(--muted); }
+    input, select, textarea { width: 100%; border: 1px solid #304237; border-radius: 10px; padding: 12px; background: #0b100d; color: var(--ink); min-width: 0; }
+    textarea { resize: vertical; }
+    .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn { border: 1px solid #35473b; border-radius: 10px; padding: 10px 13px; background: #18241b; color: #e9f3e9; font-size: 12px; }
+    .btn:hover { border-color: #c8ff7080; transform: translateY(-1px); }
+    .btn.primary { background: var(--lime); border-color: var(--lime); color: #152015; font-weight: 750; }
+    .btn.danger { color: var(--red); }
+    .filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin: 10px 0 20px; }
+    .filter { border: 1px solid var(--line); background: transparent; color: #9eaea2; padding: 8px 12px; border-radius: 99px; font-size: 11px; }
+    .filter.active { border-color: #c8ff7060; background: #c8ff7012; color: var(--lime); }
+    .contact-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .contact-card {
+      border: 1px solid var(--line);
+      background: linear-gradient(145deg, #121b16, #0d130f);
+      border-radius: 16px;
+      padding: 18px;
+      min-width: 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .contact-card:before {
+      content: "";
+      position: absolute;
+      right: -45px;
+      top: -60px;
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      background: #c8ff7008;
+      pointer-events: none;
+    }
+    .card-head { display: flex; align-items: center; gap: 12px; position: relative; }
+    .avatar {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #c8ff7027, #72f0c115);
+      border: 1px solid #c8ff7035;
+      color: var(--lime);
+      font-weight: 800;
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+    .name-wrap { min-width: 0; flex: 1; }
+    .name-wrap h2 { font-size: 16px; margin: 0 0 5px; letter-spacing: -0.03em; overflow-wrap: anywhere; }
+    .name-wrap p { font-size: 11px; color: var(--muted); margin: 0; overflow-wrap: anywhere; }
+    .lang-pill { font-size: 10px; color: #c9e5cc; border: 1px solid #32483a; border-radius: 99px; padding: 5px 8px; white-space: nowrap; }
+    .contact-details { display: grid; gap: 9px; margin: 19px 0; color: #c0cdc2; font-size: 12px; overflow-wrap: anywhere; }
+    .detail { display: flex; gap: 9px; align-items: flex-start; }
+    .detail span:first-child { width: 17px; color: var(--mint); flex-shrink: 0; }
+    .notes { font-size: 12px; line-height: 1.7; color: #91a096; border-top: 1px solid #25352a; padding-top: 12px; min-height: 50px; overflow-wrap: anywhere; }
+    .card-actions { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 14px; }
+    .card-actions .btn { font-size: 11px; padding: 8px 10px; }
+    .empty { grid-column: 1/-1; border: 1px dashed #3a4b3e; border-radius: 16px; text-align: center; padding: 48px 20px; color: var(--muted); line-height: 1.8; }
+    .empty strong { display: block; color: #e5efe6; font-size: 16px; margin-bottom: 6px; }
+    .footer { border-top: 1px solid #26372c; padding: 20px var(--pad); display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; color: #7d8c80; font-size: 10px; letter-spacing: 0.06em; }
+    .modal-backdrop { position: fixed; inset: 0; background: #000a; backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 18px; z-index: 30; }
+    .modal-backdrop.open { display: flex; }
+    .modal { width: min(580px, 100%); max-height: 90vh; overflow: auto; border: 1px solid #3b5141; background: #0d1510; border-radius: 18px; padding: 24px; box-shadow: 0 25px 100px #0009; }
+    .modal-head { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 18px; }
+    .modal-head h2 { font: 400 29px Georgia, serif; margin: 0; }
+    .close { background: transparent; border: 1px solid var(--line); color: #cdd9ce; border-radius: 99px; width: 32px; height: 32px; display: grid; place-items: center; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field { display: grid; gap: 7px; margin-bottom: 12px; }
+    .field label { font-size: 11px; color: #aebdb1; }
+    .full { grid-column: 1/-1; }
+    .form-error { color: var(--red); font-size: 12px; min-height: 18px; }
+    .modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+    .toast { position: fixed; bottom: 20px; left: 50%; transform: translate(-50%, 20px); opacity: 0; pointer-events: none; transition: all 0.2s; background: #d8ffb8; color: #142016; padding: 11px 16px; border-radius: 10px; font-size: 12px; font-weight: 700; z-index: 40; }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+    @media (max-width: 900px) {
+      .contact-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .intro-grid { grid-template-columns: 1fr; }
+      .privacy-card { max-width: 600px; }
+    }
+    @media (max-width: 580px) {
+      .top { flex-wrap: wrap; }
+      .main-nav { order: 3; width: 100%; margin: 0; }
+      main { margin-top: 30px; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .stats { gap: 8px; }
+      .stat { padding: 13px; }
+      .stat strong { font-size: 23px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .full { grid-column: auto; }
+      .intro-grid { gap: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <a href="/" class="brand" style="text-decoration:none;color:var(--ink)">Bol<span>Saathi</span><small>LIVE INTERPRETER</small></a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a class="nav-link" href="/">Workspace</a>
+      <a class="nav-link active" href="/contacts.html">Contacts <span class="nav-count" id="navCount">0</span></a>
+    </nav>
+    <div class="user-profile-widget" id="userProfileWidget">
+      <span class="user-badge" id="userBadge">Authenticating…</span>
+      <button id="logoutBtn" class="logout-btn">Logout</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="intro-grid">
+      <div>
+        <div class="eyebrow">YOUR PEOPLE, IN ONE PLACE</div>
+        <h1>Make every<br>conversation <em>personal.</em></h1>
+        <p class="lead">Keep your clients, collaborators, and meeting partners close. Save their preferred language and context so your next conversation starts with less friction.</p>
+      </div>
+      <aside class="privacy-card">
+        <b>✦ Local by design</b><br>
+        Contacts are saved in this browser on this device. They are not uploaded to the BolSaathi server. Avoid storing sensitive personal information on shared devices.
+      </aside>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><strong id="totalCount">0</strong><span>Total contacts</span></div>
+      <div class="stat"><strong id="clientCount">0</strong><span>Clients & customers</span></div>
+      <div class="stat"><strong id="urduCount">0</strong><span>Prefer Urdu</span></div>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-wrap">
+        <input id="search" type="search" placeholder="Search name, company, email, notes…" aria-label="Search contacts">
+      </div>
+      <div class="actions">
+        <button class="btn" id="importBtn">Import CSV</button>
+        <button class="btn" id="exportBtn">Export CSV</button>
+        <button class="btn primary" id="addBtn">＋ Add contact</button>
+        <input id="csvFile" type="file" accept=".csv,text/csv" hidden>
+      </div>
+    </div>
+
+    <div class="filter-row" role="group" aria-label="Filter contacts">
+      <button class="filter active" data-filter="all">All contacts</button>
+      <button class="filter" data-filter="Client">Clients</button>
+      <button class="filter" data-filter="Collaborator">Collaborators</button>
+      <button class="filter" data-filter="Other">Other</button>
+    </div>
+
+    <div class="contact-grid" id="contactGrid" aria-live="polite"></div>
+  </main>
+
+  <footer class="footer">
+    <span>BOLSAATHI LIVE 3.0 · CONTACTS</span>
+    <span>Contacts are stored locally in this browser</span>
+  </footer>
+
+  <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <form class="modal" id="contactForm">
+      <div class="modal-head">
+        <h2 id="modalTitle">Add a contact</h2>
+        <button type="button" class="close" id="closeModal" aria-label="Close">✕</button>
+      </div>
+      <input type="hidden" id="contactId">
+      <div class="form-grid">
+        <div class="field">
+          <label for="name">Full name *</label>
+          <input id="name" maxlength="100" required placeholder="e.g. Sara Ahmed">
+        </div>
+        <div class="field">
+          <label for="company">Company / team</label>
+          <input id="company" maxlength="100" placeholder="e.g. Northstar Studio">
+        </div>
+        <div class="field">
+          <label for="email">Email</label>
+          <input id="email" type="email" maxlength="160" placeholder="sara@example.com">
+        </div>
+        <div class="field">
+          <label for="phone">Phone / WhatsApp</label>
+          <input id="phone" maxlength="40" placeholder="+92 …">
+        </div>
+        <div class="field">
+          <label for="kind">Relationship</label>
+          <select id="kind">
+            <option>Client</option>
+            <option>Collaborator</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="language">Preferred language</label>
+          <select id="language">
+            <option value="English">English</option>
+            <option value="Urdu">Urdu</option>
+            <option value="Both">English & Urdu</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label for="notes">Conversation notes</label>
+          <textarea id="notes" rows="3" maxlength="1000" placeholder="Preferred terminology, project context, meeting reminders…"></textarea>
+        </div>
+      </div>
+      <div class="form-error" id="formError" role="alert"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn" id="cancelModal">Cancel</button>
+        <button class="btn primary" type="submit">Save contact</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script type="module" src="./contacts.js"></script>
+</body>
+</html>
