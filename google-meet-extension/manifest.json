@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "BolSaathi Live \u2014 Google Meet Companion",
+  "version": "0.1.0",
+  "description": "Translate visible Google Meet captions between English and Urdu with your BolSaathi backend.",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://meet.google.com/*",
+    "http://localhost:3000/*",
+    "http://127.0.0.1:3000/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "BolSaathi Live",
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://meet.google.com/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "content.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}

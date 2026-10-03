@@ -1,0 +1,26 @@
+{
+  "name": "bolsaathi-live-2",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k \"node --watch server.js\" \"vite\"",
+    "build": "vite build",
+    "start": "npm run build && NODE_ENV=production node server.js"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "@zoom/meetingsdk": "^4.0.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "openai": "^5.0.0",
+    "concurrently": "^9.1.2"
+  },
+  "devDependencies": {
+    "vite": "^6.1.0"
+  }
+}
