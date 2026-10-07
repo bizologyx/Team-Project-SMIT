@@ -12,11 +12,12 @@
     "node": ">=22"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.117.2",
+    "@firebase/auth": "^1.13.6",
     "@zoom/meetingsdk": "^4.0.0",
     "concurrently": "^9.1.2",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "firebase": "^11.10.0",
     "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
     "openai": "^5.0.0"
