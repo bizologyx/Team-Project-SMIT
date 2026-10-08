@@ -3,8 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="description" content="BolSaathi Live 3.0 — Two-way English and Urdu interpretation workspace with Zoom integration.">
-  <title>Dashboard · BolSaathi Live</title>
+  <meta name="description" content="Transzo AI — Two-way English and Urdu interpretation workspace with Zoom integration.">
+  <link rel="icon" type="image/png" href="/transzo-ai-icon.png">
+  <link rel="apple-touch-icon" href="/transzo-ai-icon.png">
+  <title>Dashboard · Transzo AI</title>
   <style>
     :root {
       color-scheme: dark;
@@ -61,8 +63,10 @@
       background: rgba(7, 11, 10, 0.76);
       backdrop-filter: blur(18px);
     }
-    .brand { font-size: 24px; font-weight: 700; letter-spacing: -0.075em; text-decoration: none; color: var(--ink); }
-    .brand span { color: var(--lime); }
+    .brand { display: inline-flex; align-items: center; gap: 10px; font-size: 24px; font-weight: 700; letter-spacing: -0.075em; text-decoration: none; color: var(--ink); }
+    .brand-icon { width: 38px; height: 38px; border: 1px solid rgba(124, 231, 255, 0.25); border-radius: 11px; object-fit: cover; box-shadow: 0 0 18px rgba(124, 231, 255, 0.12); }
+    .brand-name { color: var(--ink); }
+    .brand-accent { color: var(--lime); }
     .brand small { font: 10px system-ui; color: var(--muted); letter-spacing: 0.15em; margin-left: 9px; }
 
     .main-nav { display: flex; align-items: center; gap: 7px; margin-left: auto; margin-right: auto; }
@@ -500,7 +504,7 @@
 </head>
 <body>
   <header class="top">
-    <a href="/" class="brand">Bol<span>Saathi</span><small>LIVE INTERPRETER</small></a>
+    <a href="/" class="brand"><img class="brand-icon" src="/transzo-ai-icon.png" alt=""><span class="brand-name">Transzo <span class="brand-accent">AI</span><small>LIVE INTERPRETER</small></span></a>
     <nav class="main-nav" aria-label="Main navigation">
       <a class="nav-link active" href="/">Workspace</a>
       <a class="nav-link" href="/contacts.html">Contacts <span class="nav-count" id="contactNavCount">0</span></a>
@@ -512,11 +516,11 @@
   </header>
 
   <main>
-    <section class="hero" aria-label="BolSaathi Live introduction">
+    <section class="hero" aria-label="Transzo AI introduction">
       <div class="hero-copy">
         <div class="eyebrow"><span class="live-dot"></span> YOUR VOICE. EVERY LANGUAGE.</div>
         <h1>Language should<br>never be the <em>barrier.</em></h1>
-        <p class="intro">Meet the world halfway. BolSaathi Live helps English and Urdu speakers understand each other with a more natural, human conversation flow.</p>
+        <p class="intro">Meet the world halfway. Transzo AI helps English and Urdu speakers understand each other with a more natural, human conversation flow.</p>
         <div class="hero-actions">
           <a class="hero-cta" href="#workspace">Enter your workspace <span>↗</span></a>
           <span class="hero-note"><span class="shield">✦</span> Built for cross-language conversations</span>
@@ -574,7 +578,7 @@
     </div>
 
     <div class="notice">
-      <b>Important:</b> Joining Zoom and translating Zoom participants' audio are separate capabilities. This page can join through the Zoom Meeting SDK once configured. The browser microphone demo does not capture Zoom's internal remote audio. Production remote-audio ingestion needs approved Zoom RTMS access; sending synthesized audio back into the meeting needs a separately validated audio-routing or SDK mechanism.
+      <b>Zoom audio setup:</b> Live interpretation uses Zoom RTMS to receive the meeting's live transcripts. To send translated speech to other participants, install a virtual audio cable, choose its playback device below, and select its recording device as your Zoom microphone. Zoom shows its normal RTMS sharing disclosure to meeting participants.
     </div>
 
     <div class="layout">
@@ -610,6 +614,23 @@
           <button id="leaveZoom" disabled>Leave meeting</button>
         </div>
         <div class="divider"></div>
+        <div class="field">
+          <label>Zoom live interpretation</label>
+          <div class="controls">
+            <label class="hint"><input type="checkbox" id="rtmsConsent" style="width:auto;vertical-align:middle"> I consent to processing and translating live meeting transcripts.</label>
+          </div>
+          <div class="btnrow">
+            <button class="primary" id="startZoomRtms" disabled>Connect to live captions</button>
+            <button id="stopZoomRtms" disabled>Stop local interpretation</button>
+          </div>
+          <small id="rtmsState" class="hint" role="status" aria-live="polite">Join a Zoom meeting. The host must start or approve the Zoom RTMS app; this connects Transzo to its live transcripts.</small>
+        </div>
+        <div class="field">
+          <label>Translated speech output</label>
+          <button id="chooseSpeechOutput" type="button">Choose speaker or virtual cable</button>
+          <small id="speechOutputState" class="hint">Translation audio currently plays through the browser's default output.</small>
+        </div>
+        <div class="divider"></div>
         <div id="zoomRoot">Zoom Meeting SDK will appear here after SDK credentials, a valid meeting number and a browser-compatible environment are configured.</div>
         <p class="hint">SDK key/secret stay on the server. Do not put the SDK secret in HTML or JavaScript. The meeting host may need to allow joining, audio access and RTMS streaming.</p>
       </section>
@@ -625,7 +646,7 @@
           <select id="inputMode">
             <option value="mic">Browser microphone demo (local mic only)</option>
             <option value="manual">Manual text entry (safe test mode)</option>
-            <option value="rtms" disabled>Zoom RTMS stream (requires backend setup)</option>
+            <option value="rtms">Zoom live transcript (RTMS)</option>
           </select>
         </div>
         <div class="field">
@@ -699,8 +720,8 @@
         <ul class="hint">
           <li>Browser mic: permission prompt appears after Start mic; HTTPS or localhost is required in normal browsers.</li>
           <li>Zoom SDK: app credentials, valid SDK signature, meeting ID/passcode and host/account meeting policies.</li>
-          <li>RTMS: Zoom Marketplace app scopes/events and Developer Pack credits; host/admin policy may control start/approval.</li>
-          <li>Audio into Zoom: not implemented by the browser TTS button; needs separately validated SDK/virtual audio routing.</li>
+          <li>RTMS: Linux backend, public HTTPS webhook, Marketplace transcript scope, Developer Pack credits and host/admin approval or RTMS auto-start.</li>
+          <li>To send translated speech into the call, set this browser's output to the virtual cable playback device and Zoom's microphone to the matching virtual recording device.</li>
         </ul>
       </section>
       <section class="panel">
@@ -713,8 +734,8 @@
   </main>
 
   <footer>
-    <span>BOLSAATHI LIVE 3.0 · INTERPRETATION WORKSPACE</span>
-    <span>Prototype status: Zoom audio pipeline not yet production-wired</span>
+    <span>TRANSZO AI · INTERPRETATION WORKSPACE</span>
+    <span>RTMS transcript translation · Virtual-microphone routing</span>
   </footer>
 
   <script>

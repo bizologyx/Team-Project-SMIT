@@ -5,11 +5,19 @@ import jwt from 'jsonwebtoken';
 import OpenAI from 'openai';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createFirebaseIdTokenVerifier } from './firebaseIdToken.js';
+import { createZoomRtmsBridge } from './zoomRtms.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
 const PORT = Number(process.env.PORT || 3000);
 const openai = process.env.OPENAI_API_KEY ? new OpenAI({ apiKey: process.env.OPENAI_API_KEY }) : null;
+const zoomRtms = createZoomRtmsBridge({
+  webhookSecret: process.env.ZOOM_RTMS_WEBHOOK_SECRET,
+  clientId: process.env.ZOOM_RTMS_CLIENT_ID,
+  clientSecret: process.env.ZOOM_RTMS_CLIENT_SECRET
+});
+const firebaseIdTokenVerifier = createFirebaseIdTokenVerifier();
 
 // Security & Middleware Configuration
 app.use(helmet({
@@ -34,12 +42,16 @@ if (process.env.NODE_ENV === 'production') {
  * Health check endpoint
  */
 app.get('/api/health', (_req, res) => {
+  const zoomRtmsIsEnabled = zoomRtms.isConfigured;
   res.json({
     ok: true,
-    service: 'BolSaathi Live 3.0',
+    service: 'Transzo AI',
     translationConfigured: Boolean(openai),
     zoomSdkConfigured: Boolean(process.env.ZOOM_MEETING_SDK_KEY && process.env.ZOOM_MEETING_SDK_SECRET),
-    note: 'Zoom RTMS audio ingestion and audio injection require separate setup; see README.'
+    zoomRtmsConfigured: zoomRtmsIsEnabled,
+    note: zoomRtmsIsEnabled
+      ? 'Zoom RTMS captions are available after the meeting host starts the approved stream.'
+      : 'Zoom RTMS requires a configured Linux backend, approved Zoom RTMS app, and webhook endpoint.'
   });
 });
 
@@ -166,13 +178,66 @@ app.post('/api/zoom/signature', (req, res) => {
 });
 
 /**
- * Zoom RTMS webhook handler placeholder
+ * Create a short-lived browser ticket for a Zoom meeting transcript stream.
  */
-app.post('/api/zoom/rtms/webhook', (_req, res) => {
-  if (!process.env.ZOOM_RTMS_WEBHOOK_SECRET) {
-    return res.status(503).json({ error: 'RTMS webhook verification is not configured. See README.' });
+async function requireFirebaseUser(req, res, next) {
+  const authorization = req.get('authorization') || '';
+  const match = authorization.match(/^Bearer ([^\s]+)$/);
+  const projectId = process.env.FIREBASE_PROJECT_ID || process.env.VITE_FIREBASE_PROJECT_ID;
+
+  if (!match) {
+    return res.status(401).json({ error: 'Sign in to Transzo AI before starting live interpretation.' });
   }
-  return res.status(501).json({ error: 'RTMS webhook verification/handlers are not implemented in this starter.' });
+
+  if (!projectId) {
+    return res.status(503).json({ error: 'Set FIREBASE_PROJECT_ID on the backend to authorize Zoom RTMS sessions.' });
+  }
+
+  try {
+    req.firebaseUser = await firebaseIdTokenVerifier.verify(match[1], projectId);
+    return next();
+  } catch (error) {
+    return res.status(error.statusCode || 503).json({
+      error: error.statusCode === 401
+        ? error.message
+        : 'Could not verify the Transzo AI account. Check backend connectivity and logs.'
+    });
+  }
+}
+
+app.post('/api/zoom/rtms/session', requireFirebaseUser, (req, res) => {
+  try {
+    const session = zoomRtms.createSession(req.body?.meetingNumber, req.firebaseUser.sub);
+    res.status(201).json(session);
+  } catch (error) {
+    res.status(error.statusCode || 500).json({
+      error: error.statusCode ? error.message : 'Could not create a Zoom RTMS session.'
+    });
+  }
+});
+
+/**
+ * Stream transcripts from an active Zoom RTMS session to the matching browser.
+ */
+app.get('/api/zoom/rtms/events/:sessionId', (req, res) => {
+  const unsubscribe = zoomRtms.subscribe(req.params.sessionId, req.query.token, res);
+  if (!unsubscribe) {
+    return res.status(401).json({ error: 'Zoom RTMS session is invalid or expired.' });
+  }
+
+  res.on('close', unsubscribe);
+});
+
+/**
+ * Verify Zoom's signed webhook and connect or disconnect the RTMS client.
+ */
+app.post('/api/zoom/rtms/webhook', async (req, res) => {
+  const result = await zoomRtms.handleWebhook({
+    timestamp: req.get('x-zm-request-timestamp'),
+    signature: req.get('x-zm-signature'),
+    body: req.body
+  });
+  res.status(result.statusCode).json(result.body);
 });
 
 /**
@@ -185,4 +250,4 @@ app.get('*', (_req, res) => {
   res.status(404).send('Frontend is served by Vite during development. Open http://localhost:5173');
 });
 
-app.listen(PORT, () => console.log(`BolSaathi Live server running at http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`Transzo AI server running at http://localhost:${PORT}`));

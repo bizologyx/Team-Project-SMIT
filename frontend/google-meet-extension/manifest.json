@@ -1,8 +1,14 @@
 {
   "manifest_version": 3,
-  "name": "BolSaathi Live \u2014 Google Meet Companion",
+  "name": "Transzo AI — Google Meet Companion",
   "version": "0.1.0",
-  "description": "Translate visible Google Meet captions between English and Urdu with your BolSaathi backend.",
+  "description": "Translate visible Google Meet captions between English and Urdu with your Transzo AI backend.",
+  "icons": {
+    "16": "Glossy Transzo AI App Icon (1).png",
+    "32": "Glossy Transzo AI App Icon (1).png",
+    "48": "Glossy Transzo AI App Icon (1).png",
+    "128": "Glossy Transzo AI App Icon (1).png"
+  },
   "permissions": [
     "storage",
     "activeTab"
@@ -16,7 +22,7 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_title": "BolSaathi Live",
+    "default_title": "Transzo AI",
     "default_popup": "popup.html"
   },
   "content_scripts": [

@@ -1,5 +1,5 @@
 /**
- * BolSaathi Contacts Manager
+ * Transzo AI Contacts Manager
  * Manages private browser-local contacts stored in localStorage.
  */
 
@@ -299,7 +299,7 @@ $('contactGrid')?.addEventListener('click', async (e) => {
       await navigator.clipboard.writeText(detailsText);
       showToast('Contact details copied');
     } catch {
-      downloadFile('bolsaathi-contact.txt', detailsText, 'text/plain;charset=utf-8');
+      downloadFile('transzo-ai-contact.txt', detailsText, 'text/plain;charset=utf-8');
       showToast('Clipboard unavailable; downloaded details');
     }
   }
@@ -313,7 +313,7 @@ $('exportBtn')?.addEventListener('click', () => {
     ...contacts.map((c) => cols.map((k) => csvCell(c[k])).join(','))
   ].join('\r\n');
 
-  downloadFile('bolsaathi-contacts.csv', csvContent, 'text/csv;charset=utf-8');
+  downloadFile('transzo-ai-contacts.csv', csvContent, 'text/csv;charset=utf-8');
   showToast('Contacts exported as CSV');
 });
 

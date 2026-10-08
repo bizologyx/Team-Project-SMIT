@@ -1,12 +1,13 @@
 {
-  "name": "bolsaathi-live-2",
+  "name": "transzo-ai",
   "version": "2.0.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "concurrently -k \"node --watch backend/server.js\" \"vite\"",
     "build": "vite build",
-    "start": "npm run build && NODE_ENV=production node backend/server.js"
+    "start": "npm run build && NODE_ENV=production node backend/server.js",
+    "test": "node --test"
   },
   "engines": {
     "node": ">=22"
@@ -24,5 +25,8 @@
   },
   "devDependencies": {
     "vite": "^6.1.0"
+  },
+  "optionalDependencies": {
+    "@zoom/rtms": "^1.1.0"
   }
 }
