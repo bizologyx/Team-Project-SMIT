@@ -9,6 +9,8 @@ Team-Project-SMIT/
 ├── frontend/
 │   ├── index.html               # Main workspace dashboard UI
 │   ├── app.js                   # Client logic, Speech Recognition & Zoom Meeting SDK
+│   ├── demo.html                # Frontend-only product demo with three sample screens
+│   ├── demo.js                  # Client-side demo navigation and sample interactions
 │   ├── contacts.html            # Contacts manager UI
 │   ├── contacts.js              # Contacts management & browser local storage logic
 │   └── google-meet-extension/   # Chrome extension companion for Google Meet captions
@@ -29,6 +31,7 @@ Team-Project-SMIT/
 - **Zoom live interpretation**: Zoom RTMS live transcripts are translated and spoken into a chosen audio output. To share that speech in a Zoom call, the local computer needs a virtual audio cable selected as the browser output and as the Zoom microphone.
 - **Zoom Meeting SDK**: Embedded Zoom Meeting SDK setup with server-signed signatures.
 - **Google Meet Extension**: Companion Chrome extension for translating live meeting captions.
+- **Frontend-only product demo**: Explore sample text translations and simulated meeting captions at `/demo.html`; demo content does not call the backend.
 
 ## How to Run Locally
 

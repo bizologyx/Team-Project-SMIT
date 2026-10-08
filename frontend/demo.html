@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Explore the Transzo AI English and Urdu interpretation demo.">
+  <link rel="icon" type="image/png" href="/transzo-ai-icon.png">
+  <title>Product Demo · Transzo AI</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #070b0a;
+      --panel: #111915;
+      --line: #293a30;
+      --ink: #f1f7f0;
+      --muted: #9ba99e;
+      --lime: #c8ff70;
+      --mint: #72f0c1;
+      --pad: clamp(18px, 4vw, 54px);
+    }
+    * { box-sizing: border-box; }
+    html { background: var(--bg); scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: radial-gradient(ellipse at 85% -5%, #20412e 0%, transparent 37%), linear-gradient(180deg, #080d0b, #070b09 70%);
+    }
+    a, button { font: inherit; }
+    a { color: inherit; }
+    button { cursor: pointer; }
+    a:focus-visible, button:focus-visible, textarea:focus-visible {
+      outline: 2px solid var(--lime);
+      outline-offset: 3px;
+    }
+    .top {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 18px var(--pad);
+      border-bottom: 1px solid #26372c;
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      background: rgba(7, 11, 10, 0.88);
+      backdrop-filter: blur(18px);
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ink);
+      text-decoration: none;
+      white-space: nowrap;
+      font-size: 23px;
+      font-weight: 800;
+      letter-spacing: -0.075em;
+    }
+    .brand img { width: 38px; height: 38px; border-radius: 11px; object-fit: cover; }
+    .brand-accent { color: var(--lime); }
+    .main-nav { display: flex; align-items: center; gap: 7px; margin: auto; }
+    .nav-link {
+      padding: 10px 13px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      color: #aebbb1;
+      text-decoration: none;
+      font-size: 12px;
+    }
+    .nav-link:hover, .nav-link.active { color: #e0ffb8; background: #c8ff7010; border-color: #c8ff7038; }
+    .back-link { color: var(--muted); text-decoration: none; font-size: 12px; }
+    .back-link:hover { color: var(--lime); }
+    main { width: min(1120px, calc(100% - 2 * var(--pad))); margin: 54px auto 80px; }
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--lime);
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    .eyebrow:before { content: ""; width: 26px; height: 1px; background: var(--lime); }
+    h1, h2, p { margin-top: 0; }
+    h1 { max-width: 780px; margin-bottom: 18px; font: 400 clamp(44px, 7vw, 76px)/0.98 Georgia, serif; letter-spacing: -0.06em; }
+    h1 em { color: var(--lime); font-weight: 400; }
+    h2 { font: 400 clamp(30px, 4vw, 44px)/1.08 Georgia, serif; letter-spacing: -0.04em; }
+    .lead { max-width: 660px; color: #aebdb1; font-size: 14px; line-height: 1.8; }
+    .demo-nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 30px 0 20px;
+      padding: 7px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #0c120e;
+    }
+    .demo-tab {
+      flex: 1;
+      min-width: 145px;
+      padding: 11px 14px;
+      border: 1px solid transparent;
+      border-radius: 9px;
+      color: #aebbb1;
+      background: transparent;
+      font-size: 12px;
+      text-align: left;
+    }
+    .demo-tab span { display: block; margin-bottom: 4px; color: var(--lime); font-size: 10px; letter-spacing: 0.12em; }
+    .demo-tab:hover, .demo-tab[aria-current="page"] { border-color: #c8ff7038; background: #c8ff7010; color: var(--ink); }
+    .demo-page {
+      display: none;
+      min-height: 380px;
+      padding: clamp(22px, 4vw, 42px);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      background: linear-gradient(145deg, #121b16, #0d130f);
+    }
+    .demo-page.active { display: block; animation: appear 0.24s ease both; }
+    @keyframes appear { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    .overview-grid { display: grid; grid-template-columns: 1fr 0.8fr; gap: 32px; align-items: center; }
+    .feature-list { display: grid; gap: 12px; margin-top: 25px; }
+    .feature { display: flex; gap: 12px; align-items: flex-start; color: #b8c7bb; font-size: 13px; line-height: 1.6; }
+    .feature i { display: grid; width: 25px; height: 25px; flex: 0 0 25px; place-items: center; border: 1px solid #c8ff7038; border-radius: 50%; color: var(--lime); font-style: normal; }
+    .preview-card { padding: 23px; border: 1px solid #c8ff7026; border-radius: 16px; background: linear-gradient(145deg, #18251b, #0d1410); }
+    .preview-label { margin-bottom: 12px; color: var(--muted); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; }
+    .phrase { padding: 14px 0; border-top: 1px solid #293a30; font-size: 15px; }
+    .phrase:last-child { color: var(--lime); text-align: right; font-size: 20px; }
+    .primary, .secondary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-height: 43px;
+      padding: 10px 15px;
+      border: 1px solid #35473b;
+      border-radius: 10px;
+      color: var(--ink);
+      background: #18241b;
+      text-decoration: none;
+      font-size: 12px;
+    }
+    .primary { border-color: var(--lime); color: #152015; background: var(--lime); font-weight: 750; }
+    .primary:hover, .secondary:hover { transform: translateY(-1px); }
+    .toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 20px 0; }
+    .translate-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .text-panel { padding: 17px; border: 1px solid var(--line); border-radius: 13px; background: #0b100d; }
+    .text-panel label { display: block; margin-bottom: 11px; color: var(--muted); font-size: 11px; }
+    textarea { display: block; width: 100%; min-height: 120px; resize: vertical; border: 0; color: var(--ink); background: transparent; font: inherit; line-height: 1.7; }
+    textarea[dir="rtl"] { font-size: 20px; }
+    .sample-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 17px; }
+    .sample-btn { padding: 8px 10px; border: 1px solid #304237; border-radius: 99px; color: #bdcabe; background: transparent; font-size: 11px; }
+    .sample-btn:hover { border-color: var(--lime); color: var(--lime); }
+    .notice { color: var(--muted); font-size: 11px; line-height: 1.7; }
+    .meeting-head { display: flex; align-items: center; justify-content: space-between; gap: 15px; flex-wrap: wrap; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+    .meeting-head h2 { margin: 0; }
+    .live-state { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); font-size: 11px; }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #64746a; }
+    .live-state.is-live { color: var(--mint); }
+    .live-state.is-live .live-dot { background: var(--mint); box-shadow: 0 0 12px var(--mint); }
+    .meeting-content { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 20px; }
+    .caption-card { min-height: 180px; padding: 18px; border: 1px solid var(--line); border-radius: 13px; background: #0b100d; }
+    .caption-card h3 { color: var(--muted); font-size: 10px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
+    .caption-card p { margin: 25px 0 0; color: #e8f0e9; font-size: 17px; line-height: 1.7; }
+    .caption-card p[lang="ur"] { color: var(--lime); font-size: 22px; }
+    footer { display: flex; justify-content: space-between; gap: 12px; padding: 20px var(--pad); border-top: 1px solid #26372c; color: #829187; font-size: 9px; letter-spacing: 0.12em; }
+    @media (max-width: 720px) {
+      .top { flex-wrap: wrap; }
+      .main-nav { order: 3; width: 100%; margin: 0; }
+      .back-link { margin-left: auto; }
+      main { margin-top: 34px; }
+      .overview-grid, .translate-grid, .meeting-content { grid-template-columns: 1fr; }
+      .demo-page { min-height: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *:before, *:after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="top">
+    <a href="/" class="brand"><img src="/transzo-ai-icon.png" alt=""><span>Transzo <span class="brand-accent">AI</span></span></a>
+    <nav class="main-nav" aria-label="Demo pages">
+      <a class="nav-link" href="/">Workspace</a>
+      <a class="nav-link active" href="/demo.html">Product demo</a>
+    </nav>
+    <a class="back-link" href="/">← Back to home</a>
+  </header>
+  <main>
+    <div class="eyebrow">A FRONTEND-ONLY PRODUCT TOUR</div>
+    <h1>See how meaning<br>moves <em>between us.</em></h1>
+    <p class="lead">Explore three small previews of the Transzo experience. Everything on this page runs in your browser using sample content—no account, backend, or meeting connection needed.</p>
+
+    <nav class="demo-nav" aria-label="Demo sections">
+      <button class="demo-tab" type="button" data-page="overview"><span>01 / OVERVIEW</span>How it works</button>
+      <button class="demo-tab" type="button" data-page="translate"><span>02 / TRANSLATION</span>Text preview</button>
+      <button class="demo-tab" type="button" data-page="meeting"><span>03 / MEETING</span>Live captions</button>
+    </nav>
+
+    <section class="demo-page active" id="overview" aria-labelledby="overview-title">
+      <div class="overview-grid">
+        <div>
+          <div class="eyebrow">ENGLISH ↔ اردو</div>
+          <h2 id="overview-title">A clearer way to connect.</h2>
+          <p class="lead">Transzo helps people follow a conversation in the language that feels natural to them—without losing the human moment.</p>
+          <div class="feature-list">
+            <div class="feature"><i>↔</i><span>Follow conversations in either English or Urdu.</span></div>
+            <div class="feature"><i>♫</i><span>Read translations and listen along in the workspace.</span></div>
+            <div class="feature"><i>✦</i><span>Preview meeting captions alongside their translations.</span></div>
+          </div>
+          <div class="toolbar"><button class="primary" type="button" data-go="translate">Try the text preview <span>→</span></button></div>
+        </div>
+        <div class="preview-card" aria-label="Sample English and Urdu translation">
+          <div class="preview-label">A little hello</div>
+          <div class="phrase">It’s great to meet you.</div>
+          <div class="phrase" lang="ur" dir="rtl">آپ سے مل کر خوشی ہوئی۔</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="demo-page" id="translate" aria-labelledby="translate-title" hidden>
+      <div class="eyebrow">SAMPLE TRANSLATION</div>
+      <h2 id="translate-title">Choose a phrase to preview.</h2>
+      <p class="lead">Select one of the prepared examples to see its English and Urdu text. These sample pairs are built into this page; nothing is sent to a service.</p>
+      <div class="translate-grid">
+        <div class="text-panel"><label for="englishText">ENGLISH · SAMPLE SOURCE</label><textarea id="englishText" readonly aria-label="English sample text"></textarea></div>
+        <div class="text-panel"><label for="urduText">اردو · SAMPLE TRANSLATION</label><textarea id="urduText" lang="ur" dir="rtl" readonly aria-label="Urdu sample translation"></textarea></div>
+      </div>
+      <div class="sample-list" aria-label="Choose a sample phrase">
+        <button class="sample-btn" type="button" data-sample="greeting">A warm greeting</button>
+        <button class="sample-btn" type="button" data-sample="meeting">Start a meeting</button>
+        <button class="sample-btn" type="button" data-sample="thanks">Say thank you</button>
+      </div>
+      <p class="notice" id="sampleStatus" role="status" aria-live="polite">Choose a phrase to see its sample translation.</p>
+    </section>
+
+    <section class="demo-page" id="meeting" aria-labelledby="meeting-title" hidden>
+      <div class="meeting-head">
+        <div>
+          <div class="eyebrow">MEETING PREVIEW</div>
+          <h2 id="meeting-title">Captions, made clearer.</h2>
+        </div>
+        <span class="live-state" id="liveState"><i class="live-dot"></i><span>Sample paused</span></span>
+      </div>
+      <p class="lead" style="margin-top:18px">Start a short local simulation to see a sample English caption and Urdu interpretation. This is not connected to a real meeting.</p>
+      <div class="meeting-content">
+        <article class="caption-card"><h3>Speaker · English</h3><p id="meetingEnglish">The meeting preview is ready when you are.</p></article>
+        <article class="caption-card"><h3>Transzo · اردو</h3><p id="meetingUrdu" lang="ur" dir="rtl">میٹنگ کا پیش منظر آپ کے لیے تیار ہے۔</p></article>
+      </div>
+      <div class="toolbar">
+        <button class="primary" type="button" id="startMeeting">Play sample captions <span>▶</span></button>
+        <button class="secondary" type="button" id="stopMeeting" disabled>Stop preview</button>
+      </div>
+      <p class="notice">A browser-only simulation with prepared sample captions. No microphone or meeting permissions are used.</p>
+    </section>
+  </main>
+  <footer><span>TRANSZO AI · PRODUCT DEMO</span><span>FRONTEND-ONLY SAMPLE</span></footer>
+  <script type="module" src="./demo.js"></script>
+</body>
+</html>

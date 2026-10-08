@@ -203,6 +203,21 @@
     }
     .hero-cta:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(159, 255, 127, 0.22); }
     .hero-cta span { font-size: 18px; }
+    .hero-demo {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 17px;
+      border: 1px solid rgba(200, 255, 112, 0.3);
+      border-radius: 12px;
+      color: #d9e8dc;
+      background: rgba(200, 255, 112, 0.06);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 650;
+    }
+    .hero-demo:hover { transform: translateY(-2px); border-color: var(--lime); color: var(--lime); }
+    .hero-demo span { color: var(--lime); }
     .hero-note { display: flex; align-items: center; gap: 8px; color: #899b8f; font-size: 11px; }
     .shield { color: var(--mint); font-size: 17px; }
 
@@ -523,6 +538,7 @@
         <p class="intro">Meet the world halfway. Transzo AI helps English and Urdu speakers understand each other with a more natural, human conversation flow.</p>
         <div class="hero-actions">
           <a class="hero-cta" href="#workspace">Enter your workspace <span>↗</span></a>
+          <a class="hero-demo" href="/demo.html">Explore the demo <span>→</span></a>
           <span class="hero-note"><span class="shield">✦</span> Built for cross-language conversations</span>
         </div>
         <div class="hero-stats">

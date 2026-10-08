@@ -16,6 +16,7 @@
       rollupOptions: {
         input: {
           main: resolve(__dirname, 'frontend/index.html'),
+          demo: resolve(__dirname, 'frontend/demo.html'),
           login: resolve(__dirname, 'frontend/login.html'),
           signup: resolve(__dirname, 'frontend/signup.html'),
           contacts: resolve(__dirname, 'frontend/contacts.html')
