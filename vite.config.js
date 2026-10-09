@@ -17,6 +17,9 @@
         input: {
           main: resolve(__dirname, 'frontend/index.html'),
           demo: resolve(__dirname, 'frontend/demo.html'),
+          features: resolve(__dirname, 'frontend/features.html'),
+          useCases: resolve(__dirname, 'frontend/use-cases.html'),
+          pricing: resolve(__dirname, 'frontend/pricing.html'),
           login: resolve(__dirname, 'frontend/login.html'),
           signup: resolve(__dirname, 'frontend/signup.html'),
           contacts: resolve(__dirname, 'frontend/contacts.html')

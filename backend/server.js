@@ -36,6 +36,9 @@ if (process.env.NODE_ENV === 'production') {
   app.get('/signup', (_req, res) => res.sendFile(path.join(distPath, 'signup.html')));
   app.get('/dashboard', (_req, res) => res.sendFile(path.join(distPath, 'index.html')));
   app.get('/contacts', (_req, res) => res.sendFile(path.join(distPath, 'contacts.html')));
+  app.get('/features', (_req, res) => res.sendFile(path.join(distPath, 'features.html')));
+  app.get('/use-cases', (_req, res) => res.sendFile(path.join(distPath, 'use-cases.html')));
+  app.get('/pricing', (_req, res) => res.sendFile(path.join(distPath, 'pricing.html')));
 }
 
 /**

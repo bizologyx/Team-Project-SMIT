@@ -20,6 +20,18 @@
         "destination": "/contacts.html"
       },
       {
+        "source": "/features",
+        "destination": "/features.html"
+      },
+      {
+        "source": "/use-cases",
+        "destination": "/use-cases.html"
+      },
+      {
+        "source": "/pricing",
+        "destination": "/pricing.html"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

@@ -26,7 +26,7 @@ function navigateTo(name) {
 }
 
 window.addEventListener('hashchange', () => showPage(window.location.hash.slice(1)));
-showPage(window.location.hash.slice(1));
+showPage(window.location.hash.slice(1) || 'overview');
 
 for (const tab of tabs) {
   tab.addEventListener('click', () => navigateTo(tab.dataset.page));
@@ -83,6 +83,8 @@ const meetingEnglish = document.querySelector('#meetingEnglish');
 const meetingUrdu = document.querySelector('#meetingUrdu');
 const startMeeting = document.querySelector('#startMeeting');
 const stopMeeting = document.querySelector('#stopMeeting');
+const voiceStatus = document.querySelector('#voiceStatus');
+const voiceSelector = document.querySelector('#voiceSelector');
 let meetingTimer;
 let sampleIndex = 0;
 
@@ -93,6 +95,12 @@ function stopMeetingPreview() {
   liveLabel.textContent = 'Sample paused';
   startMeeting.disabled = false;
   stopMeeting.disabled = true;
+}
+
+function updateSelectedVoice() {
+  const gender = voiceSelector.value;
+  const label = gender === 'male' ? 'male' : 'female';
+  voiceStatus.textContent = `Christopher is ready in ${label} voice.`;
 }
 
 startMeeting.addEventListener('click', () => {
@@ -111,3 +119,5 @@ startMeeting.addEventListener('click', () => {
   meetingTimer = window.setInterval(showNextSample, 3000);
 });
 stopMeeting.addEventListener('click', stopMeetingPreview);
+voiceSelector.addEventListener('change', updateSelectedVoice);
+updateSelectedVoice();
